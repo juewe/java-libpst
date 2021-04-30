@@ -38,6 +38,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
+import java.util.TreeSet;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterOutputStream;
 
@@ -52,6 +53,7 @@ public class PSTNodeInputStream extends InputStream {
     private PSTFileContent in;
     private PSTFile pstFile;
     private final LinkedList<Long> skipPoints = new LinkedList<>();
+    private TreeSet<Long> skipPointsSet = new TreeSet<>();
     private final LinkedList<OffsetIndexItem> indexItems = new LinkedList<>();
     private int currentBlock = 0;
     private long currentLocation = 0;
@@ -147,6 +149,7 @@ public class PSTNodeInputStream extends InputStream {
                     }
                     this.indexItems.clear();
                     this.skipPoints.clear();
+                    this.skipPointsSet.clear();
                 } else {
                     int compressedLength = (int) this.length;
                     if (this.indexItems.size() > 0) {
@@ -249,6 +252,7 @@ public class PSTNodeInputStream extends InputStream {
                 final OffsetIndexItem offsetItem = this.pstFile.getOffsetIndexNode(bid);
                 this.indexItems.add(offsetItem);
                 this.skipPoints.add(this.currentLocation);
+                this.skipPointsSet.add(this.currentLocation);
                 this.currentLocation += offsetItem.size;
                 offset += arraySize;
             }
@@ -497,19 +501,15 @@ public class PSTNodeInputStream extends InputStream {
         }
 
         // get us to the right block
-        long skipPoint = 0;
+        Long skipPoint = 0L;
         this.currentBlock = 0;
         if (this.allData == null) {
-            skipPoint = this.skipPoints.get(this.currentBlock + 1);
-            while (location >= skipPoint) {
-                this.currentBlock++;
-                // is this the last block?
-                if (this.currentBlock == this.skipPoints.size() - 1) {
-                    // that's all folks
-                    break;
-                } else {
-                    skipPoint = this.skipPoints.get(this.currentBlock + 1);
-                }
+            skipPoint = this.skipPointsSet.higher(location);
+            if (skipPoint == null) {
+                skipPoint = this.skipPointsSet.last();
+                currentBlock = skipPointsSet.size() - 1;
+            } else {
+                currentBlock = skipPointsSet.headSet(skipPoint).size() - 1;
             }
         }
 
