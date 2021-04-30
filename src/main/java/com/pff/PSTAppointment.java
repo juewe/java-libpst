@@ -219,13 +219,18 @@ public class PSTAppointment extends PSTMessage {
         return this.getIntItem(0x3ff1);
     }
 
-    public PSTGlobalObjectId getGlobalObjectId() {
-        return new PSTGlobalObjectId(
-            this.getBinaryItem(this.pstFile.getNameToIdMapItem(0x00000003, PSTFile.PSETID_Meeting)));
-    }
+    /*
+     * public PSTGlobalObjectId getGlobalObjectId() { return new PSTGlobalObjectId(
+     * this.getBinaryItem(this.pstFile.getNameToIdMapItem(0x00000003,
+     * PSTFile.PSETID_Meeting))); }
+     * 
+     * public PSTGlobalObjectId getCleanGlobalObjectId() { return new
+     * PSTGlobalObjectId(
+     * this.getBinaryItem(this.pstFile.getNameToIdMapItem(0x00000023,
+     * PSTFile.PSETID_Meeting))); }
+     */
 
-    public PSTGlobalObjectId getCleanGlobalObjectId() {
-        return new PSTGlobalObjectId(
-            this.getBinaryItem(this.pstFile.getNameToIdMapItem(0x00000023, PSTFile.PSETID_Meeting)));
+    public byte[] getGlobalObjectId() {
+        return getBinaryItem(pstFile.getNameToIdMapItem(0x00000003, PSTFile.PSETID_Meeting));
     }
 }
