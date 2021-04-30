@@ -99,7 +99,7 @@ public class PSTRecipient {
     private String getString(final int id) {
         if (this.details.containsKey(id)) {
             final PSTTable7CItem item = this.details.get(id);
-            return item.getStringValue(message.getStringCodepage());
+            return item.getStringValue(message.getStringCodepage(), message.pstFile.getAutoCharsetDetector());
         }
 
         return "";

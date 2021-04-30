@@ -35,6 +35,7 @@ package com.pff;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.SimpleTimeZone;
@@ -75,6 +76,10 @@ class PSTTableItem {
         return this.getStringValue(this.entryValueType,codepage);
     }
 
+    public String getStringValue(String codepage, AutoCharsetDetector detector) {
+        return this.getStringValue(this.entryValueType, codepage, detector);
+    }
+
     /**
      * Gets a string value of the data
      *
@@ -83,6 +88,10 @@ class PSTTableItem {
      * @return string value
      */
     public String getStringValue(final int stringType,String codepage) {
+        return getStringValue(stringType, codepage, null);
+    }
+
+    private String getStringValue(final int stringType, String codepage, AutoCharsetDetector detector) {
 
         if (stringType == VALUE_TYPE_PT_UNICODE) {
             // we are a nice little-endian unicode string.
@@ -101,7 +110,14 @@ class PSTTableItem {
         if (stringType == VALUE_TYPE_PT_STRING8) {
             // System.out.println("Warning! decoding string8 without charset:
             // "+this.entryType + " - "+ Integer.toHexString(this.entryType));
-            return new String(this.data, Charset.forName(codepage)).trim();
+            if (codepage != null) {
+                return new String(this.data, Charset.forName(codepage)).trim();
+            } else if (detector != null) {
+                return detector.decodeString(this.data);
+            } else {
+                return new String(this.data, StandardCharsets.ISO_8859_1).trim();
+            }
+
         }
 
         final StringBuffer outputBuffer = new StringBuffer();

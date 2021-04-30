@@ -465,7 +465,7 @@ public class PSTObject {
             if (!item.isExternalValueReference) {
                 // System.out.println("here: "+new
                 // String(item.data)+this.descriptorIndexNode.descriptorIdentifier);
-                return PSTObject.createJavaString(item.data, stringType, codepage);
+                return this.createJavaString(item.data, stringType, codepage);
             }
             if (this.localDescriptorItems != null && this.localDescriptorItems.containsKey(item.entryValueReference)) {
                 // we have a hit!
@@ -477,7 +477,7 @@ public class PSTObject {
                         return "";
                     }
 
-                    return PSTObject.createJavaString(data, stringType, codepage);
+                    return this.createJavaString(data, stringType, codepage);
                 } catch (final Exception e) {
                     System.err.printf("Exception %s decoding string %s: %s\n", e.toString(),
                         PSTFile.getPropertyDescription(identifier, stringType),
@@ -489,7 +489,7 @@ public class PSTObject {
                 // return "";
             }
 
-            return PSTObject.createJavaString(this.data, stringType, codepage);
+            return this.createJavaString(this.data, stringType, codepage);
         }
         return "";
     }
@@ -502,7 +502,7 @@ public class PSTObject {
      * @param codepage   the codepage
      * @return the string
      */
-    static String createJavaString(final byte[] data, final int stringType, String codepage) {
+    private String createJavaString(final byte[] data, final int stringType, String codepage) {
         try {
             if (data==null)
                 return "";
@@ -512,7 +512,9 @@ public class PSTObject {
             }
 
             if (codepage == null) {
-                return new String(data);
+                // return new String(data);
+                return pstFile.getAutoCharsetDetector().decodeString(data);
+
             } else {
                 codepage = codepage.toUpperCase(Locale.US);
                 if (codepage.contentEquals("ISO-8859-8-I")) {   //  Outlook hebrew encoding is not supported by Java

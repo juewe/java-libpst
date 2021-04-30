@@ -111,6 +111,15 @@ public class PSTFile {
 
     private final PSTFileContent in;
 
+    private String globalCodepage;
+
+    private AutoCharsetDetector autoCharsetDetector = new AutoCharsetDetector() {
+        @Override
+        public String decodeString(byte[] data) {
+            return new String(data, Charset.defaultCharset());
+        }
+    };
+
     /**
      * constructor
      *
@@ -204,8 +213,6 @@ public class PSTFile {
 
     }
 
-    private String globalCodepage;
-
     private String inferGlobalCodepage() {
         int codepageIdentifier;
         try {
@@ -215,7 +222,8 @@ public class PSTFile {
         }
         if (codepageIdentifier != 0)
             return getInternetCodePageCharset(codepageIdentifier);
-        return Charset.defaultCharset().name();
+
+        return null;
     }
 
     public void setGlobalCodepage(String codepage) {
@@ -1024,6 +1032,14 @@ public class PSTFile {
 
     public void close() throws IOException {
         this.in.close();
+    }
+
+    public AutoCharsetDetector getAutoCharsetDetector() {
+        return autoCharsetDetector;
+    }
+
+    public void setAutoCharsetDetector(AutoCharsetDetector autoCharsetDetector) {
+        this.autoCharsetDetector = autoCharsetDetector;
     }
 
 }
