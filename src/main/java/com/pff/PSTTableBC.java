@@ -60,6 +60,9 @@ class PSTTableBC extends PSTTable {
         // go through each of the entries.
         // byte[] keyTableInfo = getNodeInfo(hidRoot);
         final NodeInfo keyTableInfoNodeInfo = this.getNodeInfo(this.hidRoot);
+        if (keyTableInfoNodeInfo == null) {
+            throw new PSTException("No keyTableInfoNodeInfo found in hidRoot " + this.hidRoot);
+        }
         final byte[] keyTableInfo = new byte[keyTableInfoNodeInfo.length()];
         keyTableInfoNodeInfo.in.seek(keyTableInfoNodeInfo.startOffset);
         keyTableInfoNodeInfo.in.readCompletely(keyTableInfo);

@@ -79,6 +79,9 @@ class PSTTable7C extends PSTTable {
         // TCINFO header is in the hidUserRoot node
         // byte[] tcHeaderNode = getNodeInfo(hidUserRoot);
         final NodeInfo tcHeaderNode = this.getNodeInfo(this.hidUserRoot);
+        if (tcHeaderNode == null) {
+            throw new PSTException("No TCINFO header found in hidUserRoot node " + this.hidUserRoot);
+        }
         int offset = 0;
 
         // get the TCINFO header information
@@ -366,11 +369,15 @@ class PSTTable7C extends PSTTable {
                         break;
                     } else {
                         final NodeInfo entryInfo = this.getNodeInfo(item.entryValueReference);
-                        item.data = new byte[entryInfo.length()];
-                        // System.arraycopy(entryInfo, 0, item.data, 0,
-                        // item.data.length);
-                        entryInfo.in.seek(entryInfo.startOffset);
-                        entryInfo.in.readCompletely(item.data);
+                        if (entryInfo != null) {
+                            item.data = new byte[entryInfo.length()];
+                            // System.arraycopy(entryInfo, 0, item.data, 0,
+                            // item.data.length);
+                            entryInfo.in.seek(entryInfo.startOffset);
+                            entryInfo.in.readCompletely(item.data);
+                        } else {
+                            item.data = new byte[0];
+                        }
                     }
                     /*
                      * if ( item.entryValueType != 0x001F ) {

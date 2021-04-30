@@ -124,6 +124,9 @@ class PSTTable {
 
         // all tables should have a BTHHEADER at hnid == 0x20
         final NodeInfo headerNodeInfo = this.getNodeInfo(0x20);
+        if (headerNodeInfo == null) {
+            throw new PSTException("Table does not have a BTHHEADER at hnid == 0x20");
+        }
         headerNodeInfo.in.seek(headerNodeInfo.startOffset);
         int headerByte = headerNodeInfo.in.read() & 0xFF;
         if (headerByte != 0xb5) {
@@ -236,11 +239,11 @@ class PSTTable {
         final int whichBlock = (hnid >>> 16);
         if (whichBlock > this.arrayBlocks.length) {
             // Block doesn't exist!
-            String err = String.format("getNodeInfo: block doesn't exist! hnid = 0x%08X\n", hnid);
-            err += String.format("getNodeInfo: block doesn't exist! whichBlock = 0x%08X\n", whichBlock);
-            err += "\n" + (this.arrayBlocks.length);
-            throw new PSTException(err);
-            // return null;
+            // String err = String.format("getNodeInfo: block doesn't exist! hnid = 0x%08X\n", hnid);
+            // err += String.format("getNodeInfo: block doesn't exist! whichBlock = 0x%08X\n", whichBlock);
+            // err += "\n" + (this.arrayBlocks.length);
+            // throw new PSTException(err);
+            return null;
         }
 
         // A normal node in a local heap
@@ -253,8 +256,9 @@ class PSTTable {
         int iHeapNodePageMap = (int) this.in.seekAndReadLong(blockOffset, 2) + blockOffset;
         final int cAlloc = (int) this.in.seekAndReadLong(iHeapNodePageMap, 2);
         if (index >= cAlloc + 1) {
-            throw new PSTException(String.format("getNodeInfo: node index doesn't exist! nid = 0x%08X\n", hnid));
-            // return null;
+            // throw new PSTException(String.format("getNodeInfo: node index doesn't exist!
+            // nid = 0x%08X\n", hnid));
+            return null;
         }
         iHeapNodePageMap += (2 * index) + 2;
         final int start = (int) this.in.seekAndReadLong(iHeapNodePageMap, 2) + blockOffset;
