@@ -23,5 +23,5 @@ jobs:
       - name: Upload binary
         uses: actions/upload-artifact@v2
         with:
-          name: extractor-${{ matrix.os }}
-          path: extractor*
+          name: java-libpst-${{ matrix.os }}
+          path: java-libpst *
