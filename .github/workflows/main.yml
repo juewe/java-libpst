@@ -11,6 +11,12 @@ jobs:
           - os: windows-latest
             uploaded_filename: java-libpst.exe
             local_path: D:/a/java-libpst/java-libpst/target/
+          - os: macos-latest
+            uploaded_filename: java-libpst
+            local_path:  /Users/runner/work/java-libpst/java-libpst/target/java-libpst
+          - os: ubuntu-latest
+            uploaded_filename: java-libpst
+            local_path:  /home/runner/work/java-libpst/java-libpst/target/
 
     steps:
       - uses: actions/checkout@v4
@@ -25,13 +31,7 @@ jobs:
       - name: Example step using Maven plugin  # https://graalvm.github.io/native-build-tools/latest/maven-plugin.html
         run: mvn -Pnative package
 
-#      - name: Download binary
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: java-libpst-${{ matrix.os }}
-#          path: java-libpst *
-
-      - name: Download binary
+      - name: upload binary
         uses: actions/upload-artifact@v4
         with:
           path: ${{ matrix.local_path }}
