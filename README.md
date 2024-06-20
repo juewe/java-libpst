@@ -10,7 +10,9 @@ and the fork from https://github.com/sepinf-inc
 - adding a simple (and not robust!) command line interface
 - allowing filter relevant message by messageId
 - allowing filter relevant messages by foldername (Displayname) and arbitrary text in message
-
+### binary releases
+Want to start fast working? Download one of the GRAAL-VM 21 binary releases...
+(i don't have tested them yet)
 ### how export is done:
 #### technically
 Opens a pst file, retrieving relevant messages and exports attachments as files with names like
