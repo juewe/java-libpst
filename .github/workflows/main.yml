@@ -12,10 +12,10 @@ jobs:
             uploaded_filename: java-libpst.exe
             local_path: D:/a/java-libpst/java-libpst/target/
           - os: macos-latest
-            uploaded_filename: java-libpst
+            uploaded_filename: java-libpst_macos
             local_path:  /Users/runner/work/java-libpst/java-libpst/target/java-libpst
           - os: ubuntu-latest
-            uploaded_filename: java-libpst
+            uploaded_filename: java-libpst_ubuntu
             local_path:  /home/runner/work/java-libpst/java-libpst/target/
 
     steps:
@@ -35,4 +35,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: ${{ matrix.local_path }}
-          name: ${{ matrix.uploaded_filename }}
+          name: ${{ matrix.uploaded_filename}}
+          overwrite: true
