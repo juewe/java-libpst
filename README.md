@@ -1,3 +1,46 @@
+
+## Disclaimer
+This is a small facade to the java-libpst project(s)  
+https://github.com/sepinf-inc/java-libpst
+from https://github.com/rjohnsondev 
+and the fork from https://github.com/sepinf-inc
+
+### things added:
+- an Extractor class mainly for extracting attachments 
+- adding a simple (and not robust!) command line interface
+- allowing filter relevant message by messageId
+- allowing filter relevant messages by foldername (Displayname) and arbitrary text in message
+
+### how export is done:
+#### technically
+Opens a pst file, retrieving relevant messages and exports attachments as files with names like
+
+- message_id + "_" + attachmentFileName 
+
+Ensuring file creation can be done on every system (linuxoid, win...) without overwrite multiple attachments with same name but different cases, filename is uppercase testet and eventually suffixed wit an ordinal number, if there are multiple versions of the same (uppercase) name. 
+
+  #### example call
+    java-libpst path/to/pst all path/to/outputDir 
+    java-libpst path/to/pst all path/to/outputDir -fMyFolderNamePart -mSomeRelevantMessageContent
+    java-libpst path/to/pst all path/to/outputDir -fMyFolderNamePart
+    java-libpst path/to/pst all path/to/outputDir -mSomeRelevantMessageContent
+
+
+  - Variant a) by messageId: 
+    the message is located by id, all attachments will be exported as file
+  - Variant b) by switch "ALL": 
+      all message and all attachments will be exported as file(s)
+  - Variant c) by switch "ALL" and switches [-f] AND/OR [-m] 
+      - all pst folders are searched (if given, filterd by -f-expression) 
+      - all messages in filtered folders are seacrehd by given -m-expression 
+
+### things to do:
+- make command line robust (a plenty of libs are in the wild)
+- enable search with regex
+- export not only attachments
+- enable password saved pst export
+
+## Original
 The PST File format is used by Outlook for the storage of emails.  Over the years many people have accumulated a large amount of important email and other information into these files, this project aims to allow people to access and extract this information so that it may be migrated to other messaging systems.
 
 This project was originally based off the documentation created through the fantastic reverse engineering effort made by the [libpff](https://sourceforge.net/projects/libpff) project.  The library has been improved with information provided by the release of the official PST specs by Microsoft.

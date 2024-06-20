@@ -182,9 +182,9 @@ public class Extraktor {
                 for (int x = 0; x < numAttach; x++) {
                     String fileName = fileNameingRule.apply(message.getDescriptorNodeId(), message.getAttachment(x).getLongFilename());
                     int i = 1;
-                    while (attachmentNames.containsValue(fileName))
+                    while (attachmentNames.containsValue(fileName.toUpperCase()))
                         fileName = fileNameingRule.apply(message.getDescriptorNodeId(), message.getAttachment(x).getLongFilename()+"_"+ ++i);
-                    attachmentNames.put(x, fileName);
+                    attachmentNames.put(x, fileName.toUpperCase());
                 }
 
                 for (int x = 0; x < numAttach; x++) {
