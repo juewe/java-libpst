@@ -26,12 +26,15 @@ public class Extraktor {
         static String messageSearchExpression;
 
     /**
-     * this predicate let pass all objects...
+     * This predicates let pass all objects...
      */
     static public BiPredicate<PSTFolder, String> folderVisitor = (folder, searchText) -> true;
     static public BiPredicate<PSTMessage, String> messageVisitor = (message, searchText) -> true;
 
 
+    /**
+     * Folder filter predicate text search.
+     */
     static BiPredicate<PSTFolder, String> folderDisplayNameFilter = (folder, searchText) -> {
         try {
             if (searchText==null || searchText.isBlank()) return false;
@@ -41,6 +44,10 @@ public class Extraktor {
         }
         return false;
     };
+
+    /**
+     * Message filter predicate text search.
+     */
     static BiPredicate<PSTMessage, String> messageContentFilter = (message, searchText) -> {
         try {
             if (searchText==null || searchText.isBlank()) return false;
@@ -54,32 +61,39 @@ public class Extraktor {
     };
 
     /**
-     * this filenaming convention prefix every filename with the message id
+     * Default file naming convention: prefix every filename with the message id.
      */
     BiFunction<Long, String, String> defaultFileNamingRule = (messageId, filename)-> {
             return messageId + "_" + filename;
     };
 
+    /**
+     * Main with simple commandline args interpreter.
+     * @param args
+     */
     public static void main(final String[] args) {
 
         long messageId = -1;
 
+        // help text
         if (args.length < 3) {
             log("there must be a least two arguments:");
             log("1: a valid path to a pst file");
             log("2:  - a message id ");
             log("    - OR 'ALL' if all attachments of all emails should be exported");
             log("3: a valid path to a writeable directory");
-            log("+:    - -f for a string which has to be part of folders displayname ");
-            log("+:    - -m for a string which has to be part of message text ");
+            log("+:    - -f for a string which has to be part of folders displayname (if ALL is given)");
+            log("+:    - -m for a string which has to be part of message text (if ALL is given)");
             System.exit(1);
         }
 
+        // pst must be readable
         if(!Files.isReadable(Path.of(args[0]))){
             log("given path <" + args[0] + "> seems not to be a readable pst file");
             System.exit(1);
         }
 
+        // scnd arg must be all or a messageId
         String command = args[1].trim().toUpperCase();
         if (command.equals("ALL")){
             log("export all attachments....");
@@ -92,12 +106,14 @@ public class Extraktor {
             }
         }
 
+        // outputdir must be writable
         if(!Files.isWritable(Path.of(args[2]))|| !Files.isDirectory(Path.of(args[2]))){
             log("given path <" + args[2] + "> is not writeable or no directory");
             System.exit(1);
         }
         outputDir = Path.of(args[2]);
 
+        // if searchexpression is given, build expression predicates
         for (int i = 3; i < args.length; i++) {
             if (args[i].toLowerCase().contains("-f")){
                 folderSearchExpression = args[i].trim().substring(2);
@@ -110,6 +126,7 @@ public class Extraktor {
             }
         }
 
+        // try open pst
         try {
             pstFile = new PSTFile(args[0]);
         } catch (PSTException | IOException e) {
@@ -117,6 +134,7 @@ public class Extraktor {
             System.exit(1);
         }
 
+        // start extraction
         try {
             Extraktor extraktor = new Extraktor();
             if (command.equals("ALL")){
@@ -131,11 +149,25 @@ public class Extraktor {
 
     }
 
+    /**
+     * Default entrypoint with default config.
+     * @param filename
+     */
     public void processPstFile(String filename) {
+        processPstFile(filename, folderVisitor, messageVisitor);
+    }
+
+    /**
+     * Public entrypoint for executing extraction with own visitor/filter expressions or as simple callback events...
+     * @param filename
+     * @param pstFolderFilter
+     * @param pstMessageFilter
+     */
+    public void processPstFile(String filename, BiPredicate<PSTFolder, String> pstFolderFilter, BiPredicate<PSTMessage, String> pstMessageFilter) {
         try {
             PSTFile pstFile = new PSTFile(filename);
             log("process PST file <" + pstFile.getMessageStore().getDisplayName() + ">");
-            processFolder(pstFile.getRootFolder(), folderVisitor, messageVisitor);
+            processFolder(pstFile.getRootFolder(), pstFolderFilter, pstMessageFilter);
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -217,8 +249,13 @@ public class Extraktor {
     }
 
 
-
-    private static String MessagteToString(PSTMessage message){
+    /**
+     * 'PST-object to text' method which enables simple text searches....
+     * @implNote not alle possible relevant items are currently extracted, e.g. PSTMessage has a lot of attributes which could be interesting.
+     * @param message
+     * @return
+     */
+    public static String MessagteToString(PSTMessage message){
         if (message instanceof PSTContact) {
             final PSTContact contact = (PSTContact) message;
             return contact.toString();

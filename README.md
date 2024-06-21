@@ -19,7 +19,8 @@ Opens a pst file, retrieving relevant messages and exports attachments as files 
 
 - message_id + "_" + attachmentFileName 
 
-Ensuring file creation can be done on every system (linuxoid, win...) without overwrite multiple attachments with same name but different cases, filename is uppercase testet and eventually suffixed wit an ordinal number, if there are multiple versions of the same (uppercase) name. 
+Ensuring file creation can successfully be done (on every system linuxoid, win...) without overwrite multiple attachments
+(e.g. with equal names but different cases), therefore filename is uppercase testet and eventually suffixed with an ordinal number, if there are multiple versions of the same (uppercase) name. 
 
   #### example call
     java-libpst path/to/pst all path/to/outputDir 
@@ -40,7 +41,7 @@ Ensuring file creation can be done on every system (linuxoid, win...) without ov
 - make command line robust (a plenty of libs are in the wild)
 - enable search with regex
 - export not only attachments
-- enable password saved pst export
+- enable password protected pst export
 
 ## Original
 The PST File format is used by Outlook for the storage of emails.  Over the years many people have accumulated a large amount of important email and other information into these files, this project aims to allow people to access and extract this information so that it may be migrated to other messaging systems.
