@@ -1,9 +1,12 @@
 
 ## Disclaimer
 This is a small facade to the java-libpst project(s)  
-https://github.com/sepinf-inc/java-libpst
+- https://github.com/rjohnsondev/java-libpst
 from https://github.com/rjohnsondev 
-and the fork from https://github.com/sepinf-inc
+- https://github.com/sepinf-inc/java-libpst
+from https://github.com/sepinf-inc
+
+see paragraph **Original**...
 
 ### things added:
 - an Extractor class mainly for extracting attachments 
@@ -29,7 +32,7 @@ Ensuring file creation can successfully be done (on every system linuxoid, win..
       - 554411_myAttachment_2.jpg
 
 
-    #### example call
+#### example call
       java-libpst path/to/pst 1925551 path/to/outputDir 
       java-libpst path/to/pst all path/to/outputDir 
       java-libpst path/to/pst all path/to/outputDir -fMyFolderNamePart -mSomeRelevantMessageContent
@@ -51,7 +54,7 @@ Ensuring file creation can successfully be done (on every system linuxoid, win..
 - export not only attachments
 - enable password protected pst export
 
-## Original
+## Original (readme from https://github.com/rjohnsondev)
 The PST File format is used by Outlook for the storage of emails.  Over the years many people have accumulated a large amount of important email and other information into these files, this project aims to allow people to access and extract this information so that it may be migrated to other messaging systems.
 
 This project was originally based off the documentation created through the fantastic reverse engineering effort made by the [libpff](https://sourceforge.net/projects/libpff) project.  The library has been improved with information provided by the release of the official PST specs by Microsoft.
