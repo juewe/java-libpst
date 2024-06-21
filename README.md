@@ -20,22 +20,30 @@ Opens a pst file, retrieving relevant messages and exports attachments as files 
 - message_id + "_" + attachmentFileName 
 
 Ensuring file creation can successfully be done (on every system linuxoid, win...) without overwrite multiple attachments
-(e.g. with equal names but different cases), therefore filename is uppercase testet and eventually suffixed with an ordinal number, if there are multiple versions of the same (uppercase) name. 
+(e.g. with equal names but different cases):
+- uppercase filename testet and eventually suffixed with an ordinal number, if there are multiple versions of the same (uppercase) filename
+- example
+  - attachments in message with id 554411: MyAttachment.jpg and myAttachment.jpg
+    - generated files
+      - 554411_MyAttachment.jpg
+      - 554411_myAttachment_2.jpg
 
-  #### example call
-    java-libpst path/to/pst all path/to/outputDir 
-    java-libpst path/to/pst all path/to/outputDir -fMyFolderNamePart -mSomeRelevantMessageContent
-    java-libpst path/to/pst all path/to/outputDir -fMyFolderNamePart
-    java-libpst path/to/pst all path/to/outputDir -mSomeRelevantMessageContent
+
+    #### example call
+      java-libpst path/to/pst 1925551 path/to/outputDir 
+      java-libpst path/to/pst all path/to/outputDir 
+      java-libpst path/to/pst all path/to/outputDir -fMyFolderNamePart -mSomeRelevantMessageContent
+      java-libpst path/to/pst all path/to/outputDir -fMyFolderNamePart
+      java-libpst path/to/pst all path/to/outputDir -mSomeRelevantMessageContent
 
 
   - Variant a) by messageId: 
-    the message is located by id, all attachments will be exported as file
+    the message is located by id, all attachments will be exported as file (filter expressions are ignored!)
   - Variant b) by switch "ALL": 
       all message and all attachments will be exported as file(s)
-  - Variant c) by switch "ALL" and switches [-f] AND/OR [-m] 
-      - all pst folders are searched (if given, filterd by -f-expression) 
-      - all messages in filtered folders are seacrehd by given -m-expression 
+  - Variant c,d,e) by switch "ALL" and switches [-f] AND/OR [-m] 
+      - all pst folders are searched (if given, filtered by -f-expression) 
+      - all messages in filtered folders are searched by given -m-expression 
 
 ### things to do:
 - make command line robust (a plenty of libs are in the wild)
